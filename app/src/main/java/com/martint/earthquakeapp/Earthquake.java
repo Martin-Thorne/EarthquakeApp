@@ -6,33 +6,57 @@ package com.martint.earthquakeapp;
 public class Earthquake {
 
     // The latitude of the earthquake
-    private double mLatitude;
+    private double latitude;
 
     //The longitude of the earthquake
-    private double mLongitude;
+    private double longitude;
+
+    // The location of the earthquake
+    private String location;
+
+    // The magnitude of the earthquake
+    private double magnitude;
 
     /**
      * Constructs a new Earthquake object
      *
      * @param latitude  is the latitude of the earthquake
      * @param longitude is the longitude of the earthquake
+     * @param location  is the location of the earthquake
+     * @param magnitude is the magnitude of the earthquake
      */
-    public Earthquake(double latitude, double longitude) {
-        mLatitude = latitude;
-        mLongitude = longitude;
+    public Earthquake(double latitude, double longitude, String location, double magnitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.location = location;
+        this.magnitude = magnitude;
     }
 
     /**
      * @return the latitude of the earthquake
      */
-    public double getmLatitude() {
-        return mLatitude;
+    public double getLatitude() {
+        return latitude;
     }
 
     /**
      * @return the longitude of the earthquake
      */
-    public double getmLongitude() {
-        return mLongitude;
+    public double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * @return the location of the earthquake
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * @return the magnitude of the earthquake
+     */
+    public double getMagnitude() {
+        return magnitude;
     }
 }

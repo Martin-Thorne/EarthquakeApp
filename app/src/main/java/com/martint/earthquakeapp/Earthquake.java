@@ -1,5 +1,7 @@
 package com.martint.earthquakeapp;
 
+import java.net.URL;
+
 /**
  * An Earthquake object that contains information on a single earthquake
  */
@@ -17,6 +19,8 @@ public class Earthquake {
     // The magnitude of the earthquake
     private double magnitude;
 
+    private String url;
+
     /**
      * Constructs a new Earthquake object
      *
@@ -24,12 +28,14 @@ public class Earthquake {
      * @param longitude is the longitude of the earthquake
      * @param location  is the location of the earthquake
      * @param magnitude is the magnitude of the earthquake
+     * @param url       is the webpage for the earthquake
      */
-    public Earthquake(double latitude, double longitude, String location, double magnitude) {
+    public Earthquake(double latitude, double longitude, String location, double magnitude, String url) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.location = location;
         this.magnitude = magnitude;
+        this.url = url;
     }
 
     /**
@@ -58,5 +64,12 @@ public class Earthquake {
      */
     public double getMagnitude() {
         return magnitude;
+    }
+
+    /**
+     * @return the webpage for the earthquake
+     */
+    public String getUrl() {
+        return url;
     }
 }

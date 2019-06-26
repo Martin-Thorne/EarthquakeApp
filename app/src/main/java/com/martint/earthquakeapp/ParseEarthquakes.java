@@ -11,15 +11,15 @@ import java.util.ArrayList;
 /**
  * Helper class for getting/parsing earthquake data
  */
-public class GetParseEarthquakes {
+public class ParseEarthquakes {
 
-    private GetParseEarthquakes() {
+    private ParseEarthquakes() {
     }
 
     /**
-     * Parses usgs json string to extract data to create Earthquake objects
+     * Parses USGS json string to extract data to create Earthquake objects
      *
-     * @param jsonResponse
+     * @param jsonResponse USGS json string from website
      * @return Array of Earthquake objects
      */
     public static ArrayList<Earthquake> parseEarthquakes(String jsonResponse) {
@@ -51,7 +51,7 @@ public class GetParseEarthquakes {
 
 
         } catch (JSONException e) {
-            Log.e("GetParseEarthquakes", "Problem parsing JSON results", e);
+            Log.e("ParseEarthquakes", "Problem parsing JSON results", e);
         }
 
         return earthquakes;

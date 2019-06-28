@@ -13,11 +13,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -28,6 +30,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String OPERATION_URL_EXTRA = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
     private GoogleMap map;
     private ArrayList<Earthquake> earthquakes;
+    // Used to create a latitude and longitude bound that includes markers
+    LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .snippet("Magnitude:" + earthquake.getMagnitude()));
             // Adds the url of the earthquake webpage to the marker
             marker.setTag(earthquake.getUrl());
+            // Adds the latitude and longitude of the marker to the builder
+            builder.include(marker.getPosition());
         }
     }
 
@@ -98,9 +104,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    // If request successful parse string then add markers
+                    // If request successful parse string, add markers and move the camera to show markers
                     earthquakes = ParseEarthquakes.parseEarthquakes(response);
                     addMarkers();
+                    // Creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                    map.animateCamera(cu);
                 }
             },
             new Response.ErrorListener() {

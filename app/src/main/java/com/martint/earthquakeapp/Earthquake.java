@@ -1,7 +1,5 @@
 package com.martint.earthquakeapp;
 
-import java.net.URL;
-
 /**
  * An Earthquake object that contains information on a single earthquake
  */
@@ -19,6 +17,7 @@ public class Earthquake {
     // The magnitude of the earthquake
     private double magnitude;
 
+    // The webpage for the earthquake
     private String url;
 
     /**

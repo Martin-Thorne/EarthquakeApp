@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
-    private static final String OPERATION_URL_EXTRA = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+    private static final String EARTHQUAKE_URL_USGS = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
     private GoogleMap map;
     private ArrayList<Earthquake> earthquakes;
     // Used to create a latitude and longitude bound that includes markers
@@ -61,6 +61,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Adds markers and info windows to show recent earthquakes.
      */
     private void addMarkers() {
+        // If there are no earthquakes, parsing failed, then display toast
+        if (earthquakes == null) {
+            Toast.makeText(getApplicationContext(), "Error parsing earthquake data", Toast.LENGTH_LONG).show();
+            return;
+        }
         // Goes through array of earthquakes adding markers and info windows to each earthquake position.
         for (int i = 0; i < earthquakes.size(); i++) {
             Earthquake earthquake = earthquakes.get(i);
@@ -100,17 +105,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     // Requests a string response from USGS website
-    StringRequest stringRequest = new StringRequest(Request.Method.GET, OPERATION_URL_EXTRA,
+    StringRequest stringRequest = new StringRequest(Request.Method.GET, EARTHQUAKE_URL_USGS,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     // If request successful parse string, add markers and move the camera to show markers
                     earthquakes = ParseEarthquakes.parseEarthquakes(response);
                     addMarkers();
-                    // Creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-                    map.animateCamera(cu);
+                    // If parsing successful creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
+                    if (earthquakes != null) {
+                        LatLngBounds bounds = builder.build();
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                        map.animateCamera(cu);
+                    }
                 }
             },
             new Response.ErrorListener() {

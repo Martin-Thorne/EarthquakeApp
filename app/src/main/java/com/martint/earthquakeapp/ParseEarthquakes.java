@@ -1,7 +1,5 @@
 package com.martint.earthquakeapp;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,25 +31,27 @@ public class ParseEarthquakes {
 
             // loop for each earthquake
             for (int i = 0; i < feature.length(); i++) {
-                JSONObject jsonObject1 = feature.getJSONObject(i);
+                // Creates JSONObject for individual eartquake
+                JSONObject jsonObjectIndividual = feature.getJSONObject(i);
                 // JSONObjects hold json objects with keys properties/geometry
-                JSONObject jsonObject2 = jsonObject1.getJSONObject("properties");
-                JSONObject jsonObject3 = jsonObject1.getJSONObject("geometry");
+                JSONObject jsonObjectProperties = jsonObjectIndividual.getJSONObject("properties");
+                JSONObject jsonObjectGeomotry = jsonObjectIndividual.getJSONObject("geometry");
                 // JSONArray hold json array of object geometry with key coordinates
-                JSONArray jsonArray = jsonObject3.getJSONArray("coordinates");
+                JSONArray jsonArray = jsonObjectGeomotry.getJSONArray("coordinates");
                 // Access JSONArray to get latitude/longitude
                 double latitude = jsonArray.getDouble(1);
                 double longitude = jsonArray.getDouble(0);
                 // Access JSONObject to get location/magnitude/url
-                String location = jsonObject2.getString("place");
-                double magnitude = jsonObject2.getDouble("mag");
-                String url = jsonObject2.getString("url");
+                String location = jsonObjectProperties.getString("place");
+                double magnitude = jsonObjectProperties.getDouble("mag");
+                String url = jsonObjectProperties.getString("url");
+                // Create new earthquake object
                 earthquakes.add(new Earthquake(latitude, longitude, location, magnitude, url));
             }
 
 
         } catch (JSONException e) {
-            Log.e("ParseEarthquakes", "Problem parsing JSON results", e);
+            return null;
         }
 
         return earthquakes;

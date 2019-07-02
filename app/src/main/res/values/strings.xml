@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Earthquake App</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name">Martin Thorne\'s Earthquake App</string>
+    <string name="title_activity_maps">Earthquake Map</string>
 </resources>

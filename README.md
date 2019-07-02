@@ -6,7 +6,7 @@ displays a map which shows recent earthquakes.
 
 ---------------------------------------------------------------------------------
 
-Android CV V1.0.0 is completed. The release consists of the following:
+Android CV V1.0.1 is completed. The release consists of the following:
 
 * Display a map with pins to show the recent earthquakes
 * When markers are clicked displays information on earthquake.

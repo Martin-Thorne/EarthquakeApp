@@ -5,7 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,11 +26,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final String EARTHQUAKE_URL_USGS = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
     private GoogleMap map;
     private ArrayList<Earthquake> earthquakes;
+
     // Used to create a latitude and longitude bound that includes markers
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
@@ -37,6 +39,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // Set up toolbar
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -61,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Adds markers and info windows to show recent earthquakes.
      */
     private void addMarkers() {
+
         // If there are no earthquakes, parsing failed, then display toast
         if (earthquakes == null) {
             Toast.makeText(getApplicationContext(), "Error parsing earthquake data", Toast.LENGTH_LONG).show();
@@ -73,8 +81,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()))
                     .title(earthquake.getLocation())
                     .snippet("Magnitude:" + earthquake.getMagnitude()));
+
             // Adds the url of the earthquake webpage to the marker
             marker.setTag(earthquake.getUrl());
+
             // Adds the latitude and longitude of the marker to the builder
             builder.include(marker.getPosition());
         }
@@ -109,9 +119,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+
                     // If request successful parse string, add markers and move the camera to show markers
                     earthquakes = ParseEarthquakes.parseEarthquakes(response);
                     addMarkers();
+
                     // If parsing successful creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
                     if (earthquakes != null) {
                         LatLngBounds bounds = builder.build();
@@ -123,6 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+
                     // If request unsuccessful display toast
                     Toast.makeText(getApplicationContext(), "Error obtaining earthquake data", Toast.LENGTH_LONG).show();
                 }

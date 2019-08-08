@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Martin Thorne\'s Earthquake App</string>
     <string name="title_activity_maps">Earthquake Map</string>
+
+    <string name="change_magnitude_menu">Change Magnitude</string>
+    <string name="refresh_menu">Refresh</string>
+    <string name="about_menu">About</string>
+
+    <string-array name="mag_array_dialog">
+        <item>Magnitude 1+</item>
+        <item>Magnitude 2+</item>
+        <item>Magnitude 3+</item>
+        <item>Magnitude 4+</item>
+        <item>Magnitude 5+</item>
+    </string-array>
 </resources>

@@ -1,5 +1,6 @@
 package com.martint.earthquakeapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
@@ -52,15 +54,58 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    /**
+     * Create options menu
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
+    /**
+     * Handles options menu selection
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //TODO add switch case for menu selection
+        switch (item.getItemId()) {
+            case R.id.change_menu:
+                new MaterialAlertDialogBuilder(this)
+//                        TODO reload to selected magnitudes
+                        .setTitle("Title")
+                        .setItems(R.array.mag_array_dialog, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                switch (i) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        break;
+                                    case 3:
+                                        break;
+                                    case 4:
+                                        break;
+                                }
+                            }
+                        })
+                        .setPositiveButton("Ok", null)
+                        .show();
+                return true;
+            case R.id.refresh_menu:
+//            TODO reload markers
+                return true;
+            case R.id.about_menu:
+//             TODO create about page
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

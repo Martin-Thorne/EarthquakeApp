@@ -99,8 +99,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .setPositiveButton("Ok", null)
                         .show();
                 return true;
-            case R.id.refresh_menu:
-//            TODO reload markers
+            case R.id.reload_markers_menu:
+
+                // clears existing markers then reloads
+                map.clear();
+                RequestQueue requestQueue = Volley.newRequestQueue(this);
+                requestQueue.add(stringRequest);
                 return true;
             case R.id.about_menu:
 //             TODO create about page
@@ -132,6 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(getApplicationContext(), "Error parsing earthquake data", Toast.LENGTH_LONG).show();
             return;
         }
+
         // Goes through array of earthquakes adding markers and info windows to each earthquake position.
         for (int i = 0; i < earthquakes.size(); i++) {
             Earthquake earthquake = earthquakes.get(i);

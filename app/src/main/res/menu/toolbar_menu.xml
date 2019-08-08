@@ -8,8 +8,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/refresh_menu"
-        android:title="@string/refresh_menu"
+        android:id="@+id/reload_markers_menu"
+        android:title="@string/reload_markers_menu"
         app:showAsAction="never"/>
 
     <item

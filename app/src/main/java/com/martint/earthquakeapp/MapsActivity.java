@@ -4,10 +4,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -77,9 +81,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.change_menu:
                 new MaterialAlertDialogBuilder(this)
-//                        TODO reload to selected magnitudes
-                        .setTitle("Title")
-                        .setItems(R.array.mag_array_dialog, new DialogInterface.OnClickListener() {
+//                        TODO re-load to selected magnitudes
+                        .setTitle(R.string.mag_dialog_title)
+                        .setItems(R.array.mag_dialog_array, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 switch (i) {
@@ -96,7 +100,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
                         })
-                        .setPositiveButton("Ok", null)
+                        .setPositiveButton("OK", null)
                         .show();
                 return true;
             case R.id.reload_markers_menu:
@@ -107,11 +111,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 requestQueue.add(stringRequest);
                 return true;
             case R.id.about_menu:
-//             TODO create about page
+
+                // Create about dialog with clickable links
+                MaterialAlertDialogBuilder aboutDialog = new MaterialAlertDialogBuilder(this);
+                aboutDialog.setTitle(R.string.about_dialog_title);
+                aboutDialog.setMessage(Html.fromHtml(getString(R.string.about_dialog_main)));
+                aboutDialog.setPositiveButton("OK", null);
+                AlertDialog builder = aboutDialog.create();
+                builder.show();
+                ((TextView) builder.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 
     /**
      * Manipulates the map once available.

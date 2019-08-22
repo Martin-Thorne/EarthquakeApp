@@ -6,11 +6,23 @@
     <string name="reload_markers_menu">Reload Markers</string>
     <string name="about_menu">About</string>
 
-    <string-array name="mag_array_dialog">
+    <string name="mag_dialog_title">Select Magnitude</string>
+
+    <string-array name="mag_dialog_array">
         <item>Magnitude 1+</item>
         <item>Magnitude 2+</item>
         <item>Magnitude 3+</item>
         <item>Magnitude 4+</item>
         <item>Magnitude 5+</item>
     </string-array>
+
+    <string name="about_dialog_title">About</string>
+
+    <string name="about_dialog_main"><![CDATA[<b>Martin Thorne\'s Earthquake App</b> <br>
+    Version number: 2.0 <br>
+    This app was created to show potential employees my abilities in coding Android applications.<br>
+    It was created using <a href="https://developer.android.com/studio">Android Studio.</a> <br>
+    Earthquake data from <a href="https:www.usgs.gov/">United States Geological Survey.</a> <br> <br>
+    My CV is also available via an app at the <a href="https://play.google.com/store/apps/details?id=com.martint.androidcv">Play store.</a> ]]></string>
+
 </resources>

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,7 +37,9 @@ import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
-    private String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+    private static final String MAGNITUDE = "Magnitude";
+    private String url;
+    private int magnitude = 6;
     private RequestQueue requestQueue;
     private StringRequest stringRequest;
     private GoogleMap map;
@@ -50,12 +53,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // Sets the magnitude if 'onSaveInstanceState' was called
+        if (savedInstanceState != null) {
+            magnitude = savedInstanceState.getInt(MAGNITUDE);
+        }
+
         // Set up toolbar
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        volley();
+        // Sets a new request queue
         requestQueue = Volley.newRequestQueue(this);
+        volleyRequest();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -98,26 +107,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.change_menu:
                 new MaterialAlertDialogBuilder(this)
-//                        TODO re-load to selected magnitudes
                         .setTitle(R.string.mag_dialog_title)
                         .setItems(R.array.mag_dialog_array, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 switch (i) {
                                     case 0:
-                                        volleyRequest(1);
+                                        magnitude = 1;
+                                        volleyRequest();
                                         break;
                                     case 1:
-                                        volleyRequest(2);
+                                        magnitude = 2;
+                                        volleyRequest();
                                         break;
                                     case 2:
-                                        volleyRequest(3);
+                                        magnitude = 3;
+                                        volleyRequest();
                                         break;
                                     case 3:
-                                        volleyRequest(4);
+                                        magnitude = 4;
+                                        volleyRequest();
                                         break;
                                     case 4:
-                                        volleyRequest(5);
+                                        magnitude = 5;
+                                        volleyRequest();
                                         break;
                                 }
                             }
@@ -220,18 +233,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Updates the map to the user requested magnitude
-     *
-     * @param magnitude the minimum earthquake magnitude requested
      */
-    private void volleyRequest(int magnitude) {
-
-        // If the current magnitude does not match the requested magnitude then the URL
-        // is updated and a new instance of stringRequest is created
-        if (!url.contains("minmag=" + magnitude)) {
+    private void volleyRequest() {
+        // If the current magnitude does not match the requested magnitude,
+        // or the url is null, then the URL
+        // is updated/ initialised and a new instance of stringRequest is created
+        if (url == null || !url.contains("minmag=" + magnitude)) {
             url = createUrl(Integer.toString(magnitude));
             volley();
         }
-        map.clear();
+        // If the map exists then it is cleared
+        if (map != null) {
+            map.clear();
+        }
         requestQueue.add(stringRequest);
     }
 
@@ -265,5 +279,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Toast.makeText(getApplicationContext(), "Error obtaining earthquake data", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    /**
+     * Saves the magnitude when user changes orientation
+     *
+     * @param outState
+     */
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(MAGNITUDE, magnitude);
     }
 }

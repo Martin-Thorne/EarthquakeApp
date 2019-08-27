@@ -36,7 +36,9 @@ import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
-    private static final String EARTHQUAKE_URL_USGS = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+    private String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+    private RequestQueue requestQueue;
+    private StringRequest stringRequest;
     private GoogleMap map;
     private ArrayList<Earthquake> earthquakes;
 
@@ -52,10 +54,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        volley();
+        requestQueue = Volley.newRequestQueue(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        requestQueue.add(stringRequest);
+        map.setOnInfoWindowClickListener(this);
+        map.moveCamera(CameraUpdateFactory.zoomTo(2.0f));
     }
 
     /**
@@ -88,14 +105,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 switch (i) {
                                     case 0:
+                                        volleyRequest(1);
                                         break;
                                     case 1:
+                                        volleyRequest(2);
                                         break;
                                     case 2:
+                                        volleyRequest(3);
                                         break;
                                     case 3:
+                                        volleyRequest(4);
                                         break;
                                     case 4:
+                                        volleyRequest(5);
                                         break;
                                 }
                             }
@@ -107,7 +129,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // clears existing markers then reloads
                 map.clear();
-                RequestQueue requestQueue = Volley.newRequestQueue(this);
                 requestQueue.add(stringRequest);
                 return true;
             case R.id.about_menu:
@@ -123,20 +144,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-        map.setOnInfoWindowClickListener(this);
-        map.moveCamera(CameraUpdateFactory.zoomTo(2.0f));
     }
 
     /**
@@ -189,31 +196,74 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Creates a URL used to request the data from USGS
+     *
+     * @param magnitude the minimum earthquake magnitude requested
+     * @return
+     */
+    private String createUrl(String magnitude) {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https");
+        builder.authority("earthquake.usgs.gov");
+        builder.appendPath("fdsnws");
+        builder.appendPath("event");
+        builder.appendPath("1");
+        builder.appendPath("query");
+        builder.appendQueryParameter("format", "geojson");
+        builder.appendQueryParameter("orderby", "time");
+        builder.appendQueryParameter("minmag", magnitude);
+        builder.appendQueryParameter("limit", "10");
+        String myUrl = builder.build().toString();
+        return myUrl;
+    }
 
-    // Requests a string response from USGS website
-    StringRequest stringRequest = new StringRequest(Request.Method.GET, EARTHQUAKE_URL_USGS,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
+    /**
+     * Updates the map to the user requested magnitude
+     *
+     * @param magnitude the minimum earthquake magnitude requested
+     */
+    private void volleyRequest(int magnitude) {
 
-                    // If request successful parse string, add markers and move the camera to show markers
-                    earthquakes = ParseEarthquakes.parseEarthquakes(response);
-                    addMarkers();
+        // If the current magnitude does not match the requested magnitude then the URL
+        // is updated and a new instance of stringRequest is created
+        if (!url.contains("minmag=" + magnitude)) {
+            url = createUrl(Integer.toString(magnitude));
+            volley();
+        }
+        map.clear();
+        requestQueue.add(stringRequest);
+    }
 
-                    // If parsing successful creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
-                    if (earthquakes != null) {
-                        LatLngBounds bounds = builder.build();
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-                        map.animateCamera(cu);
+    /**
+     * When the URL changes a new instance of stringRequest is created.
+     */
+    private void volley() {
+        // Requests a string response from USGS website
+        stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        // If request successful parse string, add markers and move the camera to show markers
+                        earthquakes = ParseEarthquakes.parseEarthquakes(response);
+                        addMarkers();
+
+                        // If parsing successful creates latitude and longitude bounds that is used to move the map camera when the markers have been placed
+                        if (earthquakes != null) {
+                            LatLngBounds bounds = builder.build();
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+                            map.animateCamera(cu);
+                        }
                     }
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                    // If request unsuccessful display toast
-                    Toast.makeText(getApplicationContext(), "Error obtaining earthquake data", Toast.LENGTH_LONG).show();
-                }
-            });
+                        // If request unsuccessful display toast
+                        Toast.makeText(getApplicationContext(), "Error obtaining earthquake data", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
 }
